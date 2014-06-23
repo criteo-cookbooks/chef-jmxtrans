@@ -8,20 +8,7 @@
 # Apache 2.0 license
 #
 
-if node['jmxtrans']['url'].end_with?('.zip')
-  include_recipe 'ark'
-
-  ark 'jmxtrans' do
-    url node['jmxtrans']['url']
-    checksum node['jmxtrans']['checksum']
-    version 'latest'
-    prefix_root node['jmxtrans']['install_prefix']
-    prefix_home node['jmxtrans']['install_prefix']
-    owner node['jmxtrans']['user']
-    group node['jmxtrans']['user']
-  end
-
-elsif node['jmxtrans']['url'].end_with?('.deb')
+if node['jmxtrans']['url'].end_with?('.deb')
   tmp_file = '/tmp' << node['jmxtrans']['url'].match('/[^/]*$').to_s
   remote_file tmp_file do
     source node['jmxtrans']['url']
@@ -35,7 +22,18 @@ elsif node['jmxtrans']['url'].end_with?('.deb')
   end
 
 else
-  fail 'Unrecognized url install type for jmxtrans (only .zip / .deb currently supported)'
+
+  include_recipe 'ark'
+
+  ark 'jmxtrans' do
+    url node['jmxtrans']['url']
+    checksum node['jmxtrans']['checksum']
+    version 'latest'
+    prefix_root node['jmxtrans']['install_prefix']
+    prefix_home node['jmxtrans']['install_prefix']
+    owner node['jmxtrans']['user']
+    group node['jmxtrans']['user']
+  end
 end
 
 user node['jmxtrans']['user']
