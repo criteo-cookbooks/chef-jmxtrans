@@ -38,14 +38,19 @@ end
 
 user node['jmxtrans']['user']
 
-servers = node.override['jmxtrans']['servers'] || node.default['jmxtrans']['servers']
-servers.each do |server|
+servers = node['jmxtrans']['servers']
+
+node.default[:jmxtrans][:server_ex] = servers.map do |server|
   queries = []
   queries << node['jmxtrans']['default_queries']['jvm']
   queries << node['jmxtrans']['default_queries'][server['type']]
   queries.compact.flatten!
-  server['queries'] << queries
+  srv = server.dup
+  srv['queries'] = queries
+  srv
 end
+
+
 
 file "#{node['jmxtrans']['home']}/jmxtrans.sh" do
   owner node['jmxtrans']['user']
@@ -102,7 +107,7 @@ template "#{node['jmxtrans']['home']}/json/set1.json" do
   mode '0755'
   notifies :restart, 'service[jmxtrans]'
   variables(
-            :servers => servers,
+            :servers => node.default[:jmxtrans][:servers_ex],
             :graphite_host => node['jmxtrans']['graphite']['host'],
             :graphite_port => node['jmxtrans']['graphite']['port'],
             :root_prefix => node['jmxtrans']['root_prefix']
