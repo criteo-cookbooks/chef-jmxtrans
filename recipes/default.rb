@@ -40,7 +40,7 @@ user node['jmxtrans']['user']
 
 servers = node['jmxtrans']['servers']
 
-node.default[:jmxtrans][:server_ex] = servers.map do |server|
+node.default[:jmxtrans][:servers_ex] = servers.map do |server|
   queries = []
   queries << node['jmxtrans']['default_queries']['jvm']
   queries << node['jmxtrans']['default_queries'][server['type']]
@@ -107,7 +107,7 @@ template "#{node['jmxtrans']['home']}/json/set1.json" do
   mode '0755'
   notifies :restart, 'service[jmxtrans]'
   variables(
-            :servers => node.default[:jmxtrans][:servers_ex],
+            :servers => node[:jmxtrans][:servers_ex],
             :graphite_host => node['jmxtrans']['graphite']['host'],
             :graphite_port => node['jmxtrans']['graphite']['port'],
             :root_prefix => node['jmxtrans']['root_prefix']
