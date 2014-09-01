@@ -38,29 +38,13 @@ end
 
 user node['jmxtrans']['user']
 
-servers = node['jmxtrans']['servers']
+servers = node.default['jmxtrans']['servers']
 servers.each do |server|
-  server['queries'] ||= []
-  server['queries'] << node['jmxtrans']['default_queries']['jvm']
-  case server['type']
-  when 'cassandra'
-    server['queries'] << node['jmxtrans']['default_queries']['cassandra']
-  when 'hadoop-datanode'
-    server['queries'] << node['jmxtrans']['default_queries']['hadoop-datanode']
-  when 'hadoop-jobtracker'
-    server['queries'] << node['jmxtrans']['default_queries']['hadoop-jobtracker']
-  when 'hadoop-namenode'
-    server['queries'] << node['jmxtrans']['default_queries']['hadoop-namenode']
-  when 'hadoop-tasktracker'
-    server['queries'] << node['jmxtrans']['default_queries']['hadoop-tasktracker']
-  when 'kafka'
-    server['queries'] << node['jmxtrans']['default_queries']['kafka']
-  when 'tomcat'
-    server['queries'] << node['jmxtrans']['default_queries']['tomcat']
-  when 'zookeeper'
-    server['queries'] << node['jmxtrans']['default_queries']['zookeeper']
-  end
-  server['queries'].flatten!
+  queries = []
+  queries << node['jmxtrans']['default_queries']['jvm']
+  queries << node['jmxtrans]['default_queries'][server['type']]
+  queries.compact.flatten!
+  server['queries'] << queries
 end
 
 file "#{node['jmxtrans']['home']}/jmxtrans.sh" do
