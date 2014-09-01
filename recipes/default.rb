@@ -42,7 +42,7 @@ servers = node.default['jmxtrans']['servers']
 servers.each do |server|
   queries = []
   queries << node['jmxtrans']['default_queries']['jvm']
-  queries << node['jmxtrans]['default_queries'][server['type']]
+  queries << node['jmxtrans']['default_queries'][server['type']]
   queries.compact.flatten!
   server['queries'] << queries
 end
