@@ -38,7 +38,7 @@ end
 
 user node['jmxtrans']['user']
 
-servers = node.default['jmxtrans']['servers']
+servers = node.override['jmxtrans']['servers'] || node.default['jmxtrans']['servers']
 servers.each do |server|
   queries = []
   queries << node['jmxtrans']['default_queries']['jvm']
