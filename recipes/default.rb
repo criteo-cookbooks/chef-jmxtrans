@@ -44,9 +44,8 @@ node.default[:jmxtrans][:servers_ex] = servers.map do |server|
   queries = []
   queries << node['jmxtrans']['default_queries']['jvm']
   queries << node['jmxtrans']['default_queries'][server['type']]
-  queries.compact.flatten!
   srv = server.dup
-  srv['queries'] = queries
+  srv['queries'] = queries.compact.flatten!
   srv
 end
 
