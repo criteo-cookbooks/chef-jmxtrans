@@ -29,7 +29,7 @@
         "host": "<%= @graphite_host %>",
         "port": <%= @graphite_port %>,
         "rootPrefix": "<%= @root_prefix %>"
-        <% unless key_suffix.nil? -%>
+        <% unless @key_suffix.nil? -%>
           ,
           "keySuffix": <%= @key_suffix %>
       <% end -%>
