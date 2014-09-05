@@ -12,7 +12,7 @@
    "username": "<%= server['username'] %>",
    "password": "<%= server['password'] %>",
    "port": <%= server['port'] %>,
-   <% unless server['alias'] == Nil -%>
+   <% unless server['alias'].nil?  -%>
     "alias": "<%= server['alias'] %>,
    <% end -%>
    "queries": [
@@ -29,7 +29,7 @@
         "host": "<%= @graphite_host %>",
         "port": <%= @graphite_port %>,
         "rootPrefix": "<%= @root_prefix %>"
-        <% unless key_suffix == Nil -%>
+        <% unless key_suffix.nil? -%>
           ,
           "keySuffix": <%= @key_suffix %>
       <% end -%>
