@@ -13,7 +13,7 @@
    "password": "<%= server['password'] %>",
    "port": <%= server['port'] %>,
    <% unless server['alias'].nil?  -%>
-    "alias": "<%= server['alias'] %>,
+    "alias": "<%= server['alias'] %>",
    <% end -%>
    "queries": [
     <% server['queries'].each_with_index do |query,index| -%>
