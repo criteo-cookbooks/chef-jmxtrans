@@ -28,7 +28,9 @@ Attributes
   along with the properties needed to access each one
 * `node['jmxtrans']['root_prefix']` - root prefix for the graphite
   buckets, defaults to "jmx"
-  
+* `node['jmxtrans']['key_suffix']`- suffix at the end of the graphite metric,
+  defaults to Nil (no suffix)
+
 
 Usage
 =====
@@ -55,8 +57,8 @@ the following example comes from a role
         'username' => 'foobar',
         'password' => 'baz'
        }
-     ]                                   
-}
+     ]
+    }
 ```
 
 Author

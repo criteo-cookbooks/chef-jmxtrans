@@ -109,7 +109,8 @@ template "#{node['jmxtrans']['home']}/json/set1.json" do
             :servers => node[:jmxtrans][:servers_ex],
             :graphite_host => node['jmxtrans']['graphite']['host'],
             :graphite_port => node['jmxtrans']['graphite']['port'],
-            :root_prefix => node['jmxtrans']['root_prefix']
+            :root_prefix => node['jmxtrans']['root_prefix']i,
+            :key_suffix => node['jmxtrans']['key_suffix']
             )
 end
 
