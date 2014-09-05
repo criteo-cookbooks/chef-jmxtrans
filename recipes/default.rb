@@ -39,13 +39,13 @@ end
 user node['jmxtrans']['user']
 
 servers = node['jmxtrans']['servers']
-
 node.default[:jmxtrans][:servers_ex] = servers.map do |server|
   queries = []
   queries << node['jmxtrans']['default_queries']['jvm']
   queries << node['jmxtrans']['default_queries'][server['type']]
   srv = server.dup
   srv['queries'] = queries.compact.flatten
+  srv['alias'] ||= node['jmxtrans']['server_alias']
   srv
 end
 
