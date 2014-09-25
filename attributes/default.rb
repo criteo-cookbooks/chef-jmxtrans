@@ -13,6 +13,7 @@ default['jmxtrans']['graphite']['port'] = '2003'
 default['jmxtrans']['servers'] = []
 default['jmxtrans']['root_prefix'] = 'jmx'
 default['jmxtrans']['key_suffix']  = nil
+default['jmxtrans']['key_suffix_path'] = nil
 default['jmxtrans']['default_queries'] = {
   'cassandra' => [
     {
