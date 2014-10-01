@@ -1,3 +1,9 @@
+<% require 'json'
+def escape_json(input)
+  JSON.generate(input, quirks_mode: true)
+end
+%>
+
 
 {
  "servers": [
@@ -9,8 +15,8 @@
   {
    "numQueryThreads": <%= server['numQueryThreads'] || 2 %>,
    "host": "<%= server['name'] %>",
-   "username": "<%= server['username'] %>",
-   "password": "<%= server['password'] %>",
+   "username": "<%= escape_json(server['username']) %>",
+   "password": "<%= escape_json(server['password']) %>",
    "port": <%= server['port'] %>,
    <% unless server['alias'].nil?  -%>
     "alias": "<%= server['alias'] %>",
@@ -37,12 +43,12 @@
       }
      ],
      "resultAlias": "<%= query['result_alias'] %>",
-     "obj": "<%= query['obj'] %>",
-     "attr": [<%= query['attr'].map {|t| "\""+t.to_s+"\""}.join(', ') %>]
+     "obj": "<%= escape_json(query['obj']) %>",
+     "attr": [<%= query['attr'].map {|t| '"' + escape_json(t.to_s) +'"'}.join(', ') %>]
     }
     <% end -%>
     ]
  }
 <% end -%>
-] 
+]
 }
