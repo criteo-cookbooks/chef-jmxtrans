@@ -201,9 +201,9 @@ default['jmxtrans']['default_queries'] = {
            ],
   'kafka' => [
     {
-      'obj' => 'kafka:type=kafka.SocketServerStats',
-      'resultAlias' => 'SocketServerStats',
-      'attr' => %w(ProduceRequestsPerSecond FetchRequestsPerSecond TotalProduceRequestMs TotalFetchRequestMs TotalBytesWritten TotalBytesRead NumProduceRequests NumFetchRequests BytesWrittenPerSecond BytesReadPerSecond MaxFetchRequestMs AvgFetchRequestMs MaxProduceRequestMs AvgProduceRequestMs)
+      'obj' => '"kafka.controller":type="ControllerStats",name="LeaderElectionRateAndTimeMs"',
+      'resultAlias' => 'LeaderElection',
+      'attr' => %w(Count FifteenMinutesRate)},
     },
     {
       'obj' => 'kafka:type=kafka.LogFlushStats',
