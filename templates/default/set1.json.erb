@@ -1,7 +1,6 @@
 <% require 'json'
 def escape_json(input)
-  if input.nil? return ""
-  JSON.generate(input, quirks_mode: true)
+  if input.nil? then '""' else JSON.generate(input, quirks_mode: true) end
 end
 %>
 
