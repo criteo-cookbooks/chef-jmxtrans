@@ -203,13 +203,8 @@ default['jmxtrans']['default_queries'] = {
     {
       'obj' => '"kafka.controller":type="ControllerStats",name="LeaderElectionRateAndTimeMs"',
       'resultAlias' => 'LeaderElection',
-      'attr' => %w(Count FifteenMinutesRate)},
+      'attr' => %w(Count FifteenMinutesRate),
     },
-    {
-      'obj' => 'kafka:type=kafka.LogFlushStats',
-      'resultAlias' => 'LogFlushStats',
-      'attr' => %w(FlushesPerSecond MaxFlushMs TotalFlushMs AvgFlushMs NumFlushes)
-    }
   ],
   'tomcat' => [
     {
