@@ -43,7 +43,7 @@ end
       }
      ],
      "resultAlias": "<%= query['result_alias'] %>",
-     "obj": "<%= escape_json(query['obj']) %>",
+     "obj": <%= escape_json(query['obj']) %>,
      "attr": [<%= query['attr'].map {|t| escape_json(t.to_s) }.join(', ') %>]
     }
     <% end -%>
