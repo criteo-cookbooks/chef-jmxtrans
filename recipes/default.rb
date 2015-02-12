@@ -8,6 +8,8 @@
 # Apache 2.0 license
 #
 
+user node['jmxtrans']['user']
+
 if node['jmxtrans']['url'].end_with?('.deb')
   tmp_file = '/tmp' << node['jmxtrans']['url'].match('/[^/]*$').to_s
   remote_file tmp_file do
@@ -36,7 +38,6 @@ else
   end
 end
 
-user node['jmxtrans']['user']
 
 servers = node['jmxtrans']['servers']
 node.default[:jmxtrans][:servers_ex] = servers.map do |server|
