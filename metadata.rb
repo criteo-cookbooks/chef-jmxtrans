@@ -10,6 +10,8 @@ version '0.6.0'
   depends cb
 end
 
+depends 'poise-service'
+
 %w(centos redhat ubuntu).each do |os|
   supports os
 end

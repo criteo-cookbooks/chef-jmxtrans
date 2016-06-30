@@ -8,7 +8,10 @@
 # Apache 2.0 license
 #
 
-user node['jmxtrans']['user']
+poise_service_user node['jmxtrans']['user'] do
+  home node['jmxtrans']['home']
+  group node['jmxtrans']['user']
+end
 
 if node['jmxtrans']['url'].end_with?('.deb')
   tmp_file = '/tmp' << node['jmxtrans']['url'].match('/[^/]*$').to_s
@@ -58,36 +61,6 @@ file "#{node['jmxtrans']['home']}/jmxtrans.sh" do
   mode 00755
 end
 
-if platform_family?('debian')
-  template '/etc/init.d/jmxtrans' do
-    source 'jmxtrans.init.deb.erb'
-    owner 'root'
-    group 'root'
-    mode '0755'
-    variables(:name => 'jmxtrans')
-    notifies :restart, 'service[jmxtrans]'
-  end
-elsif platform_family?('rhel')
-  template '/etc/init.d/jmxtrans' do
-    source 'jmxtrans.init.el.erb'
-    owner 'root'
-    group 'root'
-    mode '0755'
-    variables(:name => 'jmxtrans')
-    notifies :restart, 'service[jmxtrans]'
-  end
-else
-  fail "Unknown platform family in jmxtrans -- don't have an init template!"
-end
-
-template '/etc/default/jmxtrans' do
-  source 'jmxtrans_default.erb'
-  owner 'root'
-  group 'root'
-  mode '0644'
-  notifies :restart, 'service[jmxtrans]'
-end
-
 directory node['jmxtrans']['log_dir'] do
   owner node['jmxtrans']['user']
   group node['jmxtrans']['user']
@@ -105,7 +78,7 @@ template "#{node['jmxtrans']['home']}/json/set1.json" do
   owner node['jmxtrans']['user']
   group node['jmxtrans']['user']
   mode '0755'
-  notifies :restart, 'service[jmxtrans]'
+  notifies :restart, 'poise_service[jmxtrans]'
   variables(
             :servers => node[:jmxtrans][:servers_ex],
             :graphite_host => node['jmxtrans']['graphite']['host'],
@@ -124,7 +97,53 @@ cron 'compress and remove logs rotated by log4j' do
   find #{node['jmxtrans']['log_dir']} ! -name '*.gz' -mtime +2 -exec gzip '{}' \\;"
 end
 
-service 'jmxtrans' do
-  supports :restart => true, :status => true, :reload => true
+java_command = ['/usr/bin/java',
+                '-Xms${HEAP_SIZE}M',
+                '-Xmx${HEAP_SIZE}M',
+                '-XX:+UseConcMarkSweepGC',
+                '-XX:NewRatio=${NEW_RATIO}',
+                '-XX:NewSize=${NEW_SIZE}m',
+                '-XX:MaxNewSize=${NEW_SIZE}m',
+                '-XX:MaxTenuringThreshold=16',
+                '-XX:GCTimeRatio=9',
+                '-XX:PermSize=${PERM_SIZE}m',
+                '-XX:MaxPermSize=${MAX_PERM_SIZE}m',
+                '-XX:+UseTLAB',
+                '-XX:CMSInitiatingOccupancyFraction=${IO_FRACTION}',
+                '-XX:+CMSIncrementalMode',
+                '-XX:+CMSIncrementalPacing',
+                '-XX:ParallelGCThreads=${CPU_CORES}',
+                '-Dsun.rmi.dgc.server.gcInterval=28800000',
+                '-Dsun.rmi.dgc.client.gcInterval=28800000',
+                '-Djava.awt.headless=true',
+                '-Djava.net.preferIPv4Stack=true',
+                '-Djmxtrans.log.level=${LOG_LEVEL}',
+                '-Djmxtrans.log.dir=${LOG_DIR}',
+                '-jar',
+                '$JAR_FILE',
+                '-e',
+                '-j ${JSON_DIR}',
+                '-s ${SECONDS_BETWEEN_RUNS}',
+                '-c ${CONTINUE_ON_ERRORS}',
+                ].join(' ')
+
+poise_service 'jmxtrans' do
+  environment(
+    :JAR_FILE => "#{node['jmxtrans']['home']}/jmxtrans-all.jar",
+    :LOG_DIR => node['jmxtrans']['log_dir'],
+    :CONTINUE_ON_ERRORS => 'false',
+    :SECONDS_BETWEEN_RUNS => node['jmxtrans']['run_interval'],
+    :JSON_DIR => "#{node['jmxtrans']['home']}/json",
+    :HEAP_SIZE => node['jmxtrans']['heap_size'],
+    :NEW_SIZE => 64,
+    :CPU_CORES => node['cpu']['total'],
+    :NEW_RATIO => 8,
+    :LOG_LEVEL => node['jmxtrans']['log_level'],
+    :PERM_SIZE => 384,
+    :MAX_PERM_SIZE => 384,
+    :IO_FRACTION => 85
+  )
+  command java_command
+  directory node['jmxtrans']['home']
   action [:enable, :start]
 end
