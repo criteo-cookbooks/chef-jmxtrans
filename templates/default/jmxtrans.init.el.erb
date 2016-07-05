@@ -41,14 +41,14 @@ start() {
 
 stop() {
     echo -n $"Stopping $prog: "
-    sudo -u $user $exec stop
+    sudo -Eu $user $exec stop
     RETVAL=$?
     echo
     [ $RETVAL -eq 0 ] && rm -f $lockfile
 }
 
 status() {
-    sudo -u $user $exec status
+    sudo -Eu $user $exec status
 }
 
 restart() {
